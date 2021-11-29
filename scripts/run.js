@@ -11,19 +11,31 @@ const main = async () => {
   let lastWaveDate;
   waveCount = await waveContract.getTotalWaves();
 
-  let waveTxn = await waveContract.wave();
+  let waveTxn = await waveContract.wave("first msg");
   await waveTxn.wait();
 
   waveCount = await waveContract.getTotalWaves();
   lastWaveDate = await waveContract.getLastWaveDate();
   console.log("Last wave on %s", new Date(lastWaveDate * 1000));
 
-  waveTxn = await waveContract.connect(randomPerson).wave();
+  waveTxn = await waveContract.connect(randomPerson).wave("another msg");
   await waveTxn.wait();
 
   waveCount = await waveContract.getTotalWaves();
   lastWaveDate = await waveContract.getLastWaveDate();
   console.log("Last wave on %s", new Date(lastWaveDate * 1000));
+
+  /**
+   * Let's send a few waves!
+   */
+  waveTxn = await waveContract.wave("A message!");
+  await waveTxn.wait(); // Wait for the transaction to be mined
+
+  waveTxn = await waveContract.connect(randomPerson).wave("Another message!");
+  await waveTxn.wait(); // Wait for the transaction to be mined
+
+  let allWaves = await waveContract.getAllWaves();
+  console.log(allWaves);
 };
 
 const runMain = async () => {

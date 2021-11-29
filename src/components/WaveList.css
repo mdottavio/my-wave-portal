@@ -1,0 +1,23 @@
+@import url("../App.css");
+
+.WaveList {
+  display: flex;
+  display: flex;
+  justify-content: space-around;
+  align-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.WaveList-item {
+  color: var(--prussian-blue);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+.WaveList-item-address {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
