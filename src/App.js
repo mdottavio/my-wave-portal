@@ -1,67 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useWavePortal, useWallet } from "./hooks";
+import { config, contractAbi } from "./config";
 import "./App.css";
 
 export default function App() {
-  /*
-   * Just a state variable we use to store our user's public wallet.
-   */
-  const [currentAccount, setCurrentAccount] = useState("");
+  const {
+    lastWaveDate,
+    totalWaves,
+    error: wavePortalError,
+    sendWave,
+  } = useWavePortal(config.CONTRACT_ADDRESS, contractAbi);
+  console.log(lastWaveDate);
+  const { currentAccount, connectWallet, error: walletError } = useWallet();
 
-  const checkIfWalletIsConnected = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        console.log("Make sure you have metamask!");
-        return;
-      } else {
-        console.log("We have the ethereum object", ethereum);
-      }
-
-      /*
-       * Check if we're authorized to access the user's wallet
-       */
-      const accounts = await ethereum.request({ method: "eth_accounts" });
-
-      if (accounts.length !== 0) {
-        const account = accounts[0];
-        console.log("Found an authorized account:", account);
-        setCurrentAccount(account);
-      } else {
-        console.log("No authorized account found");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  /**
-   * Implement your connectWallet method here
-   */
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        alert("Get MetaMask!");
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      console.log("Connected", accounts[0]);
-      setCurrentAccount(accounts[0]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    checkIfWalletIsConnected();
-  }, []);
-  const wave = () => {};
+  if (wavePortalError) {
+    console.log(wavePortalError);
+  }
+  if (walletError) {
+    console.log(walletError);
+  }
 
   return (
     <div className="mainContainer">
@@ -75,17 +32,37 @@ export default function App() {
 
         <div className="bio">Let's play with ETH and waves...</div>
 
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
-
-        {/*
-         * If there is no currentAccount render this button
-         */}
-        {!currentAccount && (
+        {!currentAccount ? (
           <button className="waveButton" onClick={connectWallet}>
             Connect Wallet
           </button>
+        ) : (
+          <>
+            <div className="stats">
+              <div className="stats-row">
+                <div className="stats-column title">Last Wave</div>
+                <div className="stats-column title"># of waves</div>
+              </div>
+
+              <div className="stats-row">
+                <div className="stats-column ">
+                  {lastWaveDate
+                    ? lastWaveDate.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : "-"}
+                </div>
+                <div className="stats-column ">{totalWaves}</div>
+              </div>
+            </div>
+
+            <button className="waveButton" onClick={sendWave}>
+              Wave at Me
+            </button>
+          </>
         )}
       </div>
     </div>

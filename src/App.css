@@ -1,3 +1,21 @@
+/* https://coolors.co/e63946-f1faee-a8dadc-457b9d-1d3557 */
+
+:root {
+  --imperial-red: #e63946;
+  --honeydew: #f1faee;
+  --power-blue: #a8dadc;
+  --celadon-blue: #457b9d;
+  --prussian-blue: #1d3557;
+}
+
+body {
+  background-color: var(--honeydew);
+  color: var(--prussian-blue);
+}
+button {
+  background: var(--celadon-blue);
+  color: var(--power-blue);
+}
 .mainContainer {
   display: flex;
   justify-content: center;
@@ -14,13 +32,13 @@
 
 .header {
   font-family: monospace;
-  color: rgb(0, 0, 0, 0.3);
+  color: var(--imperial-red);
   text-align: center;
   font-size: 32px;
   font-weight: 600;
 }
+
 .header span {
-  color: rgb(0, 0, 0);
   display: inline-block;
   padding-right: 8px;
 }
@@ -30,8 +48,8 @@
 
 .bio {
   text-align: center;
-  color: #ebe6e6;
-  margin-top: 16px;
+  color: var(--celadon-blue);
+  margin: 16px 0px;
 }
 
 .waveButton {
@@ -40,6 +58,17 @@
   padding: 8px;
   border: 0;
   border-radius: 5px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+}
+.stats-column.title {
+  font-size: 18px;
+}
+.stats-column {
+  font-size: 14px;
 }
 
 @keyframes wave-animation {
