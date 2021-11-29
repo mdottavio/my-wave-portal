@@ -7,6 +7,9 @@ import "./App.css";
 
 export default function App() {
   const giphyFetch = new GiphyFetch(config.GIPHY_KEY);
+
+  const { ethereum } = window;
+
   const {
     waves,
     error: wavePortalError,
@@ -49,9 +52,21 @@ export default function App() {
           </span>{" "}
           ...
         </div>
-
+        {!ethereum && (
+          <div className="bio">
+            you will need{" "}
+            <a href="https://metamask.io/" title="metamask">
+              Metamask installed
+            </a>
+            .
+          </div>
+        )}
         {!currentAccount ? (
-          <button className="waveButton" onClick={connectWallet}>
+          <button
+            className="waveButton"
+            onClick={connectWallet}
+            disabled={!ethereum}
+          >
             Connect Wallet
           </button>
         ) : (

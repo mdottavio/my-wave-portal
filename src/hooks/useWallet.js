@@ -10,7 +10,6 @@ export const useWallet = () => {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         throw Error("Make sure you have metamask!");
       }
@@ -29,19 +28,13 @@ export const useWallet = () => {
   const checkIfWalletIsConnected = useCallback(async () => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         throw Error("Make sure you have metamask!");
       }
-      //  else {
-      //   console.log("We have the ethereum object", ethereum);
-      // }
-
       /*
        * Check if we're authorized to access the user's wallet
        */
       const accounts = await ethereum.request({ method: "eth_accounts" });
-
       if (accounts.length !== 0) {
         const account = accounts[0];
         setCurrentAccount(account);

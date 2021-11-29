@@ -11,6 +11,9 @@ export const useWavePortal = (contractAddress, contractABI) => {
   const init = useCallback(async () => {
     try {
       const { ethereum } = window;
+      if (!ethereum) {
+        throw Error("Make sure you have metamask!");
+      }
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
       const wavePortalContract = new ethers.Contract(
@@ -38,7 +41,6 @@ export const useWavePortal = (contractAddress, contractABI) => {
   };
 
   const onNewWave = (from, timestamp, message) => {
-    console.log("NewWave", from, timestamp, message);
     setWaves((prevState) => [
       ...prevState,
       {
