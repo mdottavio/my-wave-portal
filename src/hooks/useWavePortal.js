@@ -6,8 +6,9 @@ export const useWavePortal = (contractAddress, contractABI) => {
   const [lastWaveDate, setLastWaveDate] = useState(null);
   const [waves, setWaves] = useState([]);
   const [error, setError] = useState(null);
+  const [contract, setContract] = useState(null);
 
-  const checkStats = useCallback(async () => {
+  const init = useCallback(async () => {
     try {
       const { ethereum } = window;
       const provider = new ethers.providers.Web3Provider(ethereum);
@@ -17,13 +18,9 @@ export const useWavePortal = (contractAddress, contractABI) => {
         contractABI,
         signer
       );
-      const waves = await wavePortalContract.getTotalWaves();
-      setTotalWaves(waves.toNumber());
-      const lastWave = await wavePortalContract.getLastWaveDate();
-      setLastWaveDate(
-        lastWave.toNumber() > 0 ? new Date(lastWave.toNumber() * 1000) : null
-      );
-      setError(null);
+      wavePortalContract.on("NewWave", onNewWave);
+      setContract(wavePortalContract);
+      updateStats(wavePortalContract);
     } catch (err) {
       setLastWaveDate(null);
       setError(err);
@@ -31,23 +28,54 @@ export const useWavePortal = (contractAddress, contractABI) => {
   }, [contractAddress, contractABI]);
 
   useEffect(() => {
-    checkStats();
-  }, [checkStats]);
+    if (!contract) init();
+  }, [contract, init]);
+
+  const unsubscribe = () => {
+    if (contract) {
+      contract.off("NewWave", onNewWave);
+    }
+  };
+
+  const onNewWave = (from, timestamp, message) => {
+    console.log("NewWave", from, timestamp, message);
+    setWaves((prevState) => [
+      ...prevState,
+      {
+        address: from,
+        timestamp: new Date(timestamp * 1000),
+        message: message,
+      },
+    ]);
+  };
+
+  const updateStats = async (contract) => {
+    try {
+      if (!contract) {
+        throw Error("Contract not initialized");
+      }
+      const totalWaves = await contract.getTotalWaves();
+      setTotalWaves(totalWaves.toNumber());
+      const lastWave = await contract.getLastWaveDate();
+      setLastWaveDate(
+        lastWave.toNumber() > 0 ? new Date(lastWave.toNumber() * 1000) : null
+      );
+      setError(null);
+    } catch (err) {
+      setError(err);
+    }
+  };
 
   const sendWave = async (message) => {
     try {
-      const { ethereum } = window;
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const wavePortalContract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-      const waveTxn = await wavePortalContract.wave(message);
-
+      if (!contract) {
+        throw Error("Contract not initialized");
+      }
+      const waveTxn = await contract.wave(message, {
+        gasLimit: 300000,
+      });
       await waveTxn.wait();
-      checkStats();
+      await updateStats(contract);
     } catch (err) {
       setError(err);
     }
@@ -55,15 +83,11 @@ export const useWavePortal = (contractAddress, contractABI) => {
 
   const getAllWaves = async () => {
     try {
-      const { ethereum } = window;
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const wavePortalContract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-      const waveList = await wavePortalContract.getAllWaves();
+      if (!contract) {
+        throw Error("Contract not initialized");
+      }
+
+      const waveList = await contract.getAllWaves();
       /*
        * We only need address, timestamp, and message in our UI so let's
        * pick those out
@@ -89,5 +113,6 @@ export const useWavePortal = (contractAddress, contractABI) => {
     sendWave,
     getAllWaves,
     waves,
+    unsubscribe,
   };
 };

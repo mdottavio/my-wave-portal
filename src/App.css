@@ -27,7 +27,7 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 600px;
+  max-width: 650px;
 }
 
 .header {
@@ -52,23 +52,8 @@ button {
   margin: 16px 0px;
 }
 
-.waveButton {
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 8px;
-  border: 0;
-  border-radius: 5px;
-}
-
-.stats-row {
-  display: flex;
-  justify-content: space-between;
-}
-.stats-column.title {
-  font-size: 18px;
-}
-.stats-column {
-  font-size: 14px;
+.stats {
+  margin-bottom: 16px;
 }
 
 @keyframes wave-animation {

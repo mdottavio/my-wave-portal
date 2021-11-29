@@ -1,11 +1,24 @@
 const main = async () => {
   const [owner, randomPerson] = await hre.ethers.getSigners();
   const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
-  const waveContract = await waveContractFactory.deploy();
+  const waveContract = await waveContractFactory.deploy({
+    value: hre.ethers.utils.parseEther("0.1"),
+  });
   await waveContract.deployed();
 
   console.log("Contract deployed to:", waveContract.address);
   console.log("Contract deployed by:", owner.address);
+
+  /*
+   * Get Contract balance
+   */
+  let contractBalance = await hre.ethers.provider.getBalance(
+    waveContract.address
+  );
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance)
+  );
 
   let waveCount;
   let lastWaveDate;
@@ -24,6 +37,15 @@ const main = async () => {
   waveCount = await waveContract.getTotalWaves();
   lastWaveDate = await waveContract.getLastWaveDate();
   console.log("Last wave on %s", new Date(lastWaveDate * 1000));
+
+  /*
+   * Get Contract balance to see what happened!
+   */
+  contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance)
+  );
 
   /**
    * Let's send a few waves!

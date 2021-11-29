@@ -3,15 +3,12 @@ import { useWavePortal, useWallet } from "./hooks";
 import { config, contractAbi } from "./config";
 import { WaveForm, WaveList } from "./components";
 import { GiphyFetch } from "@giphy/js-fetch-api";
-import { getWaveHumanDate } from "./utils";
 import "./App.css";
 
 export default function App() {
   const giphyFetch = new GiphyFetch(config.GIPHY_KEY);
   const {
     waves,
-    lastWaveDate,
-    totalWaves,
     error: wavePortalError,
     sendWave,
     getAllWaves,
@@ -39,13 +36,19 @@ export default function App() {
     <div className="mainContainer">
       <div className="dataContainer">
         <div className="header">
-          <span role="img" className="wave-animation" aria-label="wave img">
+          <span role="img" className="wave-animation" aria-label="wave emoji">
             👋
           </span>
           Hey there!
         </div>
 
-        <div className="bio">Let's play with ETH and waves...</div>
+        <div className="bio">
+          Let's play with ETH and{" "}
+          <span role="img" aria-label="dog emoji">
+            🐶
+          </span>{" "}
+          ...
+        </div>
 
         {!currentAccount ? (
           <button className="waveButton" onClick={connectWallet}>
@@ -58,17 +61,10 @@ export default function App() {
               giphyFetch={giphyFetch}
             />
             <div className="stats">
-              <div className="stats-row">
-                <div className="stats-column title">Last God</div>
-                <div className="stats-column title"># of gods</div>
-              </div>
-
-              <div className="stats-row">
-                <div className="stats-column ">
-                  {lastWaveDate ? getWaveHumanDate(lastWaveDate) : "-"}
-                </div>
-                <div className="stats-column ">{totalWaves}</div>
-              </div>
+              Latest{" "}
+              <span role="img" aria-label="dog emoji">
+                🐶
+              </span>
             </div>
             <WaveList waves={waves} giphyFetch={giphyFetch} />
           </>
