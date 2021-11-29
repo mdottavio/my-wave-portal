@@ -51,6 +51,10 @@ button {
   color: var(--celadon-blue);
   margin: 16px 0px;
 }
+.bio > a {
+  color: var(--imperial-red);
+  text-decoration: none;
+}
 
 .stats {
   margin-bottom: 16px;
